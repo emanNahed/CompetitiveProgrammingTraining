@@ -9,6 +9,8 @@ public class Worms {
 
     private static Scanner scan = new Scanner(System.in);
 
+    //wrong answer (time limited exceeded)
+
     public static void main(String[] args) {
         int n = scan.nextInt();
 
@@ -23,28 +25,31 @@ public class Worms {
         //prefix sum
         int m = scan.nextInt();
 
-        while (m != 0) {
-            int search = scan.nextInt();
+        int [] arrm= new int[m];
+        int [] arrt= new int[m];
 
-            int low = 0;
-            int high = n;
+        for(int i= 0; i< m; i++){
+            arrm[i] = scan.nextInt();
+            arrt[i]= arrm[i];
+        }
 
-            while (low <= high) {
-                int mid = (low + high) / 2;
+        Arrays.sort(arrm);
+        Hashtable<Integer, Integer> ht= new Hashtable<>();
 
-                int a = arr[mid];
-                int b = ((mid > 0) ? arr[mid - 1] : 0);
+        int a= 0; int b= 0;
 
-                if (search > b && search <= a) {
-                    System.out.println(mid + 1);
-                    break;
-                }  else if (search > a) {
-                    low = mid + 1;
-                } else {
-                    high = mid - 1;
-                }
+        while(a < n && b < m){
+            if(arr[a] >= arrm[b]){
+                ht.put(arrm[b], a + 1);
+                b++;
             }
-            m--;
+            else{
+                a++;
+            }
+        }
+
+        for(int i= 0; i< arrt.length; i++){
+            System.out.println(ht.get(arrt[i]));
         }
     }
 }
