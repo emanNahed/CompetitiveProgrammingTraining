@@ -2,6 +2,10 @@ package Reusable_Peices;
 
 public class GCD {
 
+    int LCM(int a, int b){
+        return a* b / GCD(a,b);
+    }
+
     int GCD(int a, int b){
         if(a > b) return EcluidGCD(a, b);
 
@@ -15,4 +19,5 @@ public class GCD {
 
         return EcluidGCD(a, a % b);
     }
+
 }
