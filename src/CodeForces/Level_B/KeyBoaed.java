@@ -7,5 +7,6 @@ import java.util.*;
 
 public class KeyBoaed {
     public static void main(String[] args) throws IOException {
+
     }
 }
