@@ -7,8 +7,6 @@ import java.util.Arrays;
 
 public class AddingReversedNumbers {
 
-
-
     public static void main(String [] args) throws IOException {
         BufferedReader scan = new BufferedReader(new InputStreamReader(System.in));
 
