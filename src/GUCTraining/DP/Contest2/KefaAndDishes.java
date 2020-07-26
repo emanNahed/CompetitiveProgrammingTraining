@@ -31,27 +31,29 @@ public class KefaAndDishes {
             arr[x][y] = c;
         }
 
-        dp = new long[n][1 << m + 1];
+        dp = new long[n + 1][n + 1];
         for (long[] ints : dp) Arrays.fill(ints, -1);
 
 
-        System.out.println(maxCost(0, 1, 1, m));
+        System.out.println(maxCost(0, 0, 1, m));
 
     }
 
-    private static long maxCost(int node, int idx, int mask, int m) {
-        if (mask == m) //visit all nodes
-            return dishes[node];
-        if (idx == arr.length) return 0;
+    private static long maxCost(int node, int count, int mask, int m) {
+        if(count == m) return dishes[node];
+
+        if(mask == (1 << arr.length) - 1 || node == arr.length) return 0;
+
+        if(dp[node][count] != -1) return dp[node][count];
+
+        long max= 0;
+        for(int i= 1; i< arr.length; i++){
+            if(checkMask(mask, i))
+                max= Math.max(max, dishes[node] + arr[node][i] + maxCost(i, count+ 1, setMask(mask, i),m)); //take//leave
+        }
 
 
-        if(mask > m) return Long.MIN_VALUE;
-
-        long take = arr[node][idx] + dishes[node] + maxCost(idx, idx + 1, mask + 1, m);
-        long leave = maxCost(node, idx + 1, mask, m);
-
-
-        return Math.max(take, leave);
+        return dp[node][count]= max;
     }
 
     private static int setMask(int mask, int i) {
