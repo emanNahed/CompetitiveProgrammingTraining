@@ -31,29 +31,32 @@ public class KefaAndDishes {
             arr[x][y] = c;
         }
 
-        dp = new long[n + 1][n + 1];
+        dp = new long[1 << (n + 1)][n + 1];
         for (long[] ints : dp) Arrays.fill(ints, -1);
 
 
         System.out.println(maxCost(0, 0, 1, m));
+       // trace(0,0,1,m);
+        //System.out.println(sb);
 
     }
 
     private static long maxCost(int node, int count, int mask, int m) {
-        if(count == m) return dishes[node];
+        if(node == arr.length) return 0;
 
-        if(mask == (1 << arr.length) - 1 || node == arr.length) return 0;
+        if(count == m||mask == (1 << arr.length) - 1) return dishes[node];
 
-        if(dp[node][count] != -1) return dp[node][count];
+        if(dp[node][mask] != -1) return dp[node][mask];
+
 
         long max= 0;
-        for(int i= 1; i< arr.length; i++){
+        for(int i= 0; i< arr.length; i++){
             if(checkMask(mask, i))
-                max= Math.max(max, dishes[node] + arr[node][i] + maxCost(i, count+ 1, setMask(mask, i),m)); //take//leave
+                max= Math.max(max, dishes[node] +arr[node][i] + maxCost(i, count+ 1, setMask(mask, i),m)); //take//leave
         }
 
 
-        return dp[node][count]= max;
+        return dp[node][mask]= max;
     }
 
     private static int setMask(int mask, int i) {
@@ -65,4 +68,26 @@ public class KefaAndDishes {
         return (mask & (1 << i)) == 0;
     }
 
+    static StringBuilder sb= new StringBuilder();
+    static void trace(int node , int count, int mask, int m){
+        if(node == arr.length) return;
+        if(count == m || mask == (1 << arr.length) - 1) {
+            sb.append(node).append( " ");
+            return;
+        }
+
+        for(int i= 0; i< arr.length; i++) {
+            if(checkMask(mask, i))
+            if (maxCost(node, count, mask, m) == dishes[node] + arr[node][i] + maxCost(i, count + 1, setMask(mask, i), m)) {
+
+                sb.append(i).append(" ");
+                trace(i, count + 1, setMask(mask, i), m);
+                break;
+            }
+        }
+
+    }
+
 }
+
+
