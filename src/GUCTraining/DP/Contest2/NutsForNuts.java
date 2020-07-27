@@ -10,8 +10,10 @@ public class NutsForNuts {
    static SScanner scan= new SScanner(System.in);
     static int[][] weight;
     static int valBase;
+    static int [][] dp;
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        //Thread.sleep(1000);
         while (scan.ready()) {
             String[] nm = scan.nextLine().split(" ");
 
@@ -45,14 +47,17 @@ public class NutsForNuts {
             //counter example assume that the min element in r(valBase)= {1,1}, in second row we have this
             // {9,1,10,7} now the min one is 10 why becuar we visit the index one and can't take it's value...
 
+            dp= new int[weight.length][(1 << weight.length)];
+            for(int[] ints: dp) Arrays.fill(ints, -1);
             System.out.println(minPath(valBase, 1 << valBase));
         }
     }
 
+
+
     static int minPath(int val, int mask){
-        if(mask == (1 << weight.length)- 1) {
-            return weight[val][valBase];
-        }
+        if(mask == (1 << weight.length)- 1)  return weight[val][valBase];
+        if(dp[val][mask] != -1) return dp[val][mask];
 
         int min=  Integer.MAX_VALUE;
         for(int i= 0; i< weight.length; i++){
@@ -61,7 +66,7 @@ public class NutsForNuts {
             }
         }
 
-        return min;
+        return dp[val][mask]=  min;
     }
 
     private static int distance(Index nuts1, Index nuts2) {
