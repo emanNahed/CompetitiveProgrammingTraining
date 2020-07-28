@@ -2,12 +2,16 @@ package GUCTraining.DP.Contest2;
 
 import Reusable_Peices.SScanner;
 
-import java.awt.desktop.SystemSleepEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.StringTokenizer;
+
 public class ShoppingTrip {
 
-    static SScanner scan= new SScanner(System.in);
+    static InputReader scan= new InputReader(System.in);
     static double [][] arr;
     static double [][] save;
     static double [][] dp;
@@ -16,8 +20,6 @@ public class ShoppingTrip {
         int t= scan.nextInt();
 
         while (t-- != 0){
-            scan.nextLine();
-
             int stores= scan.nextInt();
             int roads= scan.nextInt();
 
@@ -31,17 +33,17 @@ public class ShoppingTrip {
 
                 double c= scan.nextDouble();
 
-                arr[a][b]= Math.min(arr[a][b], c);
+                arr[a][b]= Math.min(arr[a][b], c); // for duplicate widget choice minimum
                 arr[b][a] = arr[a][b];
             }
 
             saves= scan.nextInt();
             save= new double[saves + 1][2];
-            save[0][0] = 0; save[0][1] = 0;
+            save[0][0] = 0; save[0][1] = 0;  // for home
             for(int i= 1; i< saves + 1; i++) {
                 int store= scan.nextInt();
                 save[i][0] = store;
-                save[i][1]= scan.nextDouble();
+                save[i][1]=scan.nextDouble();
             }
 
 
@@ -51,38 +53,69 @@ public class ShoppingTrip {
                 for(int src= 0; src < stores + 1; src++)
 
                     for(int dst= 0; dst< stores +1; dst++)
-                        if(arr[src][intermediate] + arr[intermediate][dst] < arr[src][dst])
-                            arr[src][dst]= arr[src][intermediate] + arr[intermediate][dst];
+                            arr[src][dst]= Math.min(arr[src][dst],arr[src][intermediate] + arr[intermediate][dst]);
 
 
-            dp= new double[stores + 1][(1 << save.length)];
-            for(double [] doubles: dp) Arrays.fill(doubles, -1.0);
+            dp= new double[save.length + 1][(1 << save.length)];
+            for(double [] doubles: dp) Arrays.fill(doubles, Double.MIN_VALUE);
 
             double result= maxSave(0, 1);
-            if(result > 0.0){
+            if(result > 0.000000001){
+                //Daniel can save
                 System.out.print("Daniel can save $");
                 System.out.printf("%.2f", result);
                 System.out.println();
             }
             else
+                //Don’t leave the house
                 System.out.println("Don't leave the house");
+
+
         }
     }
 
     private static double maxSave(int current, int mask) {
-        if(mask == (1 << save.length) - 1) return - arr[(int)save[current][0]][0];
+        if(mask == (1 << save.length) - 1) return - arr[(int)save[current][0]][0]; //return the cost of return from last store to house
 
-         if(dp[current][mask] != -1) {
+         if(dp[current][mask] != Double.MIN_VALUE)
              return dp[current][mask];
-         }
 
 
         double max= -arr[(int)save[current][0]][0]; //which is better return home from this store or complete other stores?
-        for(int i= 0; i< save.length; i++)
+        for(int i= 0; i< save.length; i++) // just loop in store which has save amount
             if((mask & (1 << i)) == 0)
-                max= Math.max(max,  (save[i][1] - arr[(int) save[current][0]][(int) save[i][0]]) + maxSave(i, mask | (1 << i)));
+                max= Math.max(max, save[i][1] - arr[(int) save[current][0]][(int) save[i][0]]+ maxSave(i, mask | (1 << i)));
 
         return dp[current][mask]= max;
     }
 
+}
+
+ class InputReader {
+    private BufferedReader reader;
+    private StringTokenizer tokenizer;
+
+    public InputReader(InputStream stream) {
+        reader = new BufferedReader(new InputStreamReader(stream));
+        tokenizer = null;
+    }
+
+    public String next() {
+        while (tokenizer == null || !tokenizer.hasMoreTokens()) {
+            try {
+                tokenizer = new StringTokenizer(reader.readLine());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return tokenizer.nextToken();
+    }
+
+    public int nextInt() {
+        return Integer.parseInt(next());
+    }
+
+    public double nextDouble() {
+        return Double.parseDouble(next());
+    }
 }
